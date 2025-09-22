@@ -2,7 +2,6 @@ import java.util.Scanner;
 import java.time.LocalDate;
 
 public class App {
-
     public static void main(String[] args) throws Exception {
         String date_now = LocalDate.now().toString().replaceAll("-", "");
         int date_now_int = Integer.parseInt(date_now);
@@ -11,7 +10,7 @@ public class App {
         int[] personnummer = new int[20];
         Scanner val = new Scanner(System.in);
         int val1 = 0;
-        int barn_billjet = 0;
+        // int barn_billjet = 0;
         int date_now_int_18 = (date_now_int - 180000);
         while (val1 != 4) {
             System.out.println("Välj ett alternativ:");
@@ -22,74 +21,52 @@ public class App {
             System.out.print("Ange val: ");
             val1 = val.nextInt();
             if (val1 == 1) {
-
-                lagg_till_passagerare(personnummer);
-
+                lagg_till_passagerare(personnummer, val);
             } else if (val1 == 2) {
-                lediga_platser = 0;
-                for (int i = 0; i < personnummer.length; i++) {
-                    if (personnummer[i] == 0) {
-                        lediga_platser++;
-
-                    }
-
-                }
+                lediga_platser = rakna_lediga_platser(personnummer);
                 System.out.println("Det finns " + lediga_platser + " lediga platser");
-
             } else if (val1 == 3) {
-                lediga_platser = 0;
-                for (int i = 0; i < personnummer.length; i++) {
-                    if (personnummer[i] == 0) {
-                        lediga_platser++;
-
-                    }
-                 
-                    else if (personnummer[i] > date_now_int_18) {
-                        barn_billjet++;
-                    }
-
-                }
-
-                System.out.println(
-                        "Du har tjänat " + ((int) ((20 - lediga_platser) * 299.9) - (150 * barn_billjet)) + "kr");
+                val3(personnummer, date_now_int_18);
             }
-
         }
         val.close();
-
     }
-
-    public static void lagg_till_passagerare(int[] personnummer) {
-        String date_now = LocalDate.now().toString().replaceAll("-", "");
-        int date_now_int = Integer.parseInt(date_now.substring(2));
-        Scanner val = new Scanner(System.in);
-        // barn_billjet = 0;
+    public static void lagg_till_passagerare(int[] personnummer, Scanner mainScanner) {
         int userInput = 0;
-        // int[] personnummer = new int[20];
         System.out.print("Skriv perssonnummer för att bokam i detta format (ÅÅÅÅMMDD): ");
-
         try {
-            userInput = val.nextInt();
+            userInput = mainScanner.nextInt();
             System.out.println("Du är inbokad");
-            // if ((userInput - (date_now_int - 180000)) > 0) {
-            // ++barn_billjet;
-            // }
-
         } catch (Exception e) {
             System.out.println(
                     "ERROR Ditt personnummer är för långt vänligen skriv i detta format ÅÅÅÅMMDD eller så har du skrivit bokstäver");
+            mainScanner.nextLine();
+            return;
         }
-
         for (int i = 0; i < personnummer.length; i++) {
-
             if (personnummer[i] == 0) {
                 personnummer[i] = userInput;
                 break;
             }
-
         }
-        // return barn_billjet;
-
     }
-
+    public static void val3(int[] personnummer, int date_now_int_18) {
+        int lediga_platser = rakna_lediga_platser(personnummer);
+        int barn_billjet = 0;
+        for (int i = 0; i < personnummer.length; i++) {
+            if (personnummer[i] > date_now_int_18 && personnummer[i] != 0) {
+                barn_billjet++;
+            }
+        }
+        System.out.println("Du har tjänat " + ((int) ((20 - lediga_platser) * 299.9) - (150 * barn_billjet)) + "kr");
+    }
+    public static int rakna_lediga_platser(int[] personnummer) {
+        int lediga_platser = 0;
+        for (int i = 0; i < personnummer.length; i++) {
+            if (personnummer[i] == 0) {
+                lediga_platser++;
+            }
+        }
+        return lediga_platser;
+    }
 }
